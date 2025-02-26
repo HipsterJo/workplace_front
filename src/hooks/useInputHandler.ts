@@ -4,7 +4,7 @@ type InputsType = {
   [key: string]: string;
 };
 
-export const useInputHandler = (defaultValue = {}, isNull = false) => {
+export const useInputHandler = (defaultValue = {}) => {
   const [isInputs, setInputs] = useState<InputsType>({ ...defaultValue });
 
   const inputHandler =
