@@ -5,7 +5,7 @@ export interface InputProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   value?: string;
   className?: string;
-  error?: string; // Добавляем проп для ошибки
+  error?: string; 
 }
 
 export const Input = ({
