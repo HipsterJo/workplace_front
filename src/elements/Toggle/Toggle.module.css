@@ -1,0 +1,49 @@
+.toggleLabel {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.toggle {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.toggleSlider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+.toggle:checked + .toggleSlider {
+  background-color: #1a1a1a;
+}
+
+.toggle:checked + .toggleSlider:before {
+  transform: translateX(30px);
+}
+
+.toggle:focus-visible + .toggleSlider {
+  outline: 4px auto -webkit-focus-ring-color;
+}

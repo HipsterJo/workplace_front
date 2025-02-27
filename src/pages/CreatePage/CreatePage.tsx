@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useInputHandler } from "../../hooks/useInputHandler";
 import { Button } from "../../elements/Button/Button";
 import { createWorkplace, getWorkplace, updateWorkplace } from "../../api";
-import { NewWorkplace, PatchWorkplace } from "../../types";
+import { NewWorkplace, PatchWorkplace, WorkplaceType } from "../../types";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { Toggle } from "../../elements/Toggle/Toggle";
 
 const requiredFields = ["name", "description"];
 const errorMessages = {
@@ -19,8 +20,18 @@ export const CreatePage = () => {
   const { isInputs, inputHandler } = useInputHandler();
   const [emptyFields, setEmptyFields] = useState<string[]>([]);
   const [lastName, setLastName] = useState<string>("");
+  const [workplaceType, setWorkplaceType] = useState<WorkplaceType>(
+    WorkplaceType.DEFAULT
+  );
 
   const { id } = useParams();
+
+  const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedType = e.target.checked
+      ? WorkplaceType.NETWORK
+      : WorkplaceType.DEFAULT;
+    setWorkplaceType(selectedType);
+  };
 
   const fetchWorkplace = async () => {
     try {
@@ -29,6 +40,9 @@ export const CreatePage = () => {
       inputHandler("description")(response.description);
       inputHandler("ipv4")(response.ip_address);
       setLastName(response.name);
+      setWorkplaceType(
+        response.ip_address ? WorkplaceType.NETWORK : WorkplaceType.DEFAULT
+      );
     } catch (error) {
       console.error("Error fetching workplace:", error);
     }
@@ -54,11 +68,9 @@ export const CreatePage = () => {
       let sendedData: NewWorkplace | PatchWorkplace = {
         name: isInputs.name,
         description: isInputs.description,
-        ip_address: isInputs.ipv4,
+        ip_address:
+          workplaceType === WorkplaceType.NETWORK ? isInputs.ipv4 : null,
       };
-      if (sendedData.ip_address === "") {
-        sendedData.ip_address = null;
-      }
 
       if (lastName === isInputs.name) {
         delete sendedData.name;
@@ -122,24 +134,36 @@ export const CreatePage = () => {
           }}
         />
       </div>
+
       <div className={styles.node}>
-        <label>Ipv4*:</label>
-        <Input
-          value={isInputs.ipv4 || ""}
-          placeholder="Ipv4"
-          error={
-            emptyFields.includes("ip_address")
-              ? errorMessages.ip_address
-              : undefined
-          }
-          onChange={(e) => {
-            setEmptyFields(
-              emptyFields.filter((field) => field !== "ip_address")
-            );
-            inputHandler("ipv4")(e);
-          }}
+        <label>Workplace Type:</label>
+        <Toggle
+          checked={workplaceType === WorkplaceType.NETWORK}
+          onChange={handleTypeChange}
         />
       </div>
+
+      {workplaceType === WorkplaceType.NETWORK && (
+        <div className={styles.node}>
+          <label>Ipv4:</label>
+          <Input
+            value={isInputs.ipv4 || ""}
+            placeholder="Ipv4"
+            error={
+              emptyFields.includes("ip_address")
+                ? errorMessages.ip_address
+                : undefined
+            }
+            onChange={(e) => {
+              setEmptyFields(
+                emptyFields.filter((field) => field !== "ip_address")
+              );
+              inputHandler("ipv4")(e);
+            }}
+          />
+        </div>
+      )}
+
       <Button onClick={handleCreate}>{id ? "Update" : "Create"}</Button>
     </div>
   );

@@ -17,3 +17,8 @@ export interface PatchWorkplace {
   description?: string;
   ip_address?: string | null | undefined;
 }
+
+export enum WorkplaceType {
+  DEFAULT = "default",
+  NETWORK = "network",
+}
